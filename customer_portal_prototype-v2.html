@@ -775,6 +775,225 @@
                 flex: 1;
             }
         }
+        
+        /* Payments Page */
+        .payments-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .payment-section {
+            background: var(--slate);
+            border: 1px solid var(--steel);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+        
+        .payment-section-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--steel);
+        }
+        
+        .payment-section-icon {
+            font-size: 1.5rem;
+        }
+        
+        .payment-section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--cloud);
+        }
+        
+        .payment-section-count {
+            margin-left: auto;
+            background: var(--steel);
+            color: var(--fog);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        
+        .payment-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-height: 600px;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+        
+        .payment-cards::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .payment-cards::-webkit-scrollbar-track {
+            background: var(--midnight);
+            border-radius: 3px;
+        }
+        
+        .payment-cards::-webkit-scrollbar-thumb {
+            background: var(--steel);
+            border-radius: 3px;
+        }
+        
+        .payment-cards::-webkit-scrollbar-thumb:hover {
+            background: var(--fog);
+        }
+        
+        .payment-card {
+            background: var(--midnight);
+            border: 1px solid var(--steel);
+            border-radius: 10px;
+            padding: 1.25rem;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        
+        .payment-card:hover {
+            border-color: var(--accent);
+            transform: translateX(4px);
+        }
+        
+        .payment-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 0.75rem;
+        }
+        
+        .payment-customer-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--cloud);
+            margin-bottom: 0.25rem;
+        }
+        
+        .payment-customer-email {
+            font-size: 0.85rem;
+            color: var(--fog);
+        }
+        
+        .payment-card-amount {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            text-align: right;
+        }
+        
+        .payment-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid var(--steel);
+        }
+        
+        .payment-date-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--fog);
+        }
+        
+        .payment-frequency {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--fog);
+            background: var(--steel);
+            padding: 0.25rem 0.625rem;
+            border-radius: 4px;
+        }
+        
+        .payment-due-badge {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 0.375rem 0.75rem;
+            border-radius: 20px;
+        }
+        
+        .due-today {
+            background: rgba(255, 184, 0, 0.2);
+            color: var(--warning);
+            border: 1px solid var(--warning);
+        }
+        
+        .due-soon {
+            background: rgba(0, 217, 255, 0.15);
+            color: var(--accent);
+        }
+        
+        .overdue {
+            background: rgba(255, 71, 87, 0.2);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+        
+        .recent-payment-card {
+            background: var(--midnight);
+            border: 1px solid var(--steel);
+            border-radius: 10px;
+            padding: 1.25rem;
+            transition: all 0.2s;
+        }
+        
+        .recent-payment-card:hover {
+            border-color: var(--success);
+        }
+        
+        .recent-payment-amount {
+            color: var(--success);
+        }
+        
+        .payment-completed-badge {
+            background: rgba(0, 255, 148, 0.15);
+            color: var(--success);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 0.375rem 0.75rem;
+            border-radius: 20px;
+        }
+        
+        @media (max-width: 1024px) {
+            .payments-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .payment-cards {
+                max-height: 500px;
+            }
+        }
+        
+        @media (max-width: 640px) {
+            .payment-card-header {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+            
+            .payment-card-amount {
+                text-align: left;
+            }
+            
+            .payment-card-footer {
+                flex-direction: column;
+                gap: 0.75rem;
+                align-items: flex-start;
+            }
+        }
     </style>
 </head>
 <body>
@@ -792,7 +1011,7 @@
                 phone: '(555) 123-4567',
                 amount: 1196.00, 
                 frequency: 'Biweekly', 
-                dueDate: 'Jan 16', 
+                dueDate: '2026-02-09',
                 status: 'active',
                 currentBalance: 1196.00,
                 totalPaid: 4784.00,
@@ -812,13 +1031,14 @@
                 phone: '(555) 234-5678', 
                 amount: 1055.50, 
                 frequency: 'Monthly', 
-                dueDate: 'Jan 22', 
+                dueDate: '2026-02-08',
                 status: 'active',
                 currentBalance: 1055.50,
                 totalPaid: 3166.50,
                 payments: [
-                    { id: 1, date: '2025-12-22', amount: 1055.50, method: 'Shopify', transaction_id: 'ord_5678' },
-                    { id: 2, date: '2025-11-22', amount: 1055.50, method: 'Shopify', transaction_id: 'ord_5677' },
+                    { id: 1, date: '2026-01-08', amount: 1055.50, method: 'Shopify', transaction_id: 'ord_5678' },
+                    { id: 2, date: '2025-12-08', amount: 1055.50, method: 'Shopify', transaction_id: 'ord_5677' },
+                    { id: 3, date: '2025-11-08', amount: 1055.50, method: 'Shopify', transaction_id: 'ord_5676' },
                 ],
                 purchases: [
                     { id: 1, title: 'Monthly Service Package', amount: 1055.50, frequency: 'Monthly', date: '2025-10-22' },
@@ -831,7 +1051,7 @@
                 phone: '(555) 345-6789', 
                 amount: 1409.09, 
                 frequency: 'Monthly', 
-                dueDate: 'Nov 25', 
+                dueDate: '2025-11-25',
                 status: 'paused',
                 currentBalance: 0,
                 totalPaid: 5636.36,
@@ -849,12 +1069,13 @@
                 phone: '(555) 456-7890', 
                 amount: 1277.98, 
                 frequency: 'Monthly', 
-                dueDate: 'Jan 24', 
+                dueDate: '2026-02-10',
                 status: 'active',
                 currentBalance: 1277.98,
                 totalPaid: 2555.96,
                 payments: [
-                    { id: 1, date: '2025-12-24', amount: 1277.98, method: 'Credit Card', transaction_id: 'ch_9876' },
+                    { id: 1, date: '2026-01-10', amount: 1277.98, method: 'Credit Card', transaction_id: 'ch_9876' },
+                    { id: 2, date: '2025-12-10', amount: 1277.98, method: 'Credit Card', transaction_id: 'ch_9875' },
                 ],
                 purchases: [
                     { id: 1, title: 'Professional Services', amount: 1277.98, frequency: 'Monthly', date: '2025-11-24' },
@@ -867,15 +1088,35 @@
                 phone: '(555) 567-8901', 
                 amount: 872.00, 
                 frequency: 'Monthly', 
-                dueDate: 'Feb 3', 
+                dueDate: '2026-02-12',
                 status: 'active',
                 currentBalance: 872.00,
                 totalPaid: 1744.00,
                 payments: [
-                    { id: 1, date: '2026-01-03', amount: 872.00, method: 'Cash', transaction_id: '' },
+                    { id: 1, date: '2026-01-12', amount: 872.00, method: 'Cash', transaction_id: '' },
+                    { id: 2, date: '2025-12-12', amount: 872.00, method: 'Cash', transaction_id: '' },
                 ],
                 purchases: [
                     { id: 1, title: 'Basic Plan', amount: 872.00, frequency: 'Monthly', date: '2025-12-03' },
+                ]
+            },
+            { 
+                id: 6, 
+                name: 'Amanda Hinchee', 
+                email: 'amanda@email.com',
+                phone: '(555) 678-9012', 
+                amount: 1336.67, 
+                frequency: 'Monthly', 
+                dueDate: '2026-02-14',
+                status: 'active',
+                currentBalance: 1336.67,
+                totalPaid: 2673.34,
+                payments: [
+                    { id: 1, date: '2026-01-14', amount: 1336.67, method: 'Credit Card', transaction_id: 'ch_5432' },
+                    { id: 2, date: '2025-12-14', amount: 1336.67, method: 'Credit Card', transaction_id: 'ch_5431' },
+                ],
+                purchases: [
+                    { id: 1, title: 'Premium Package', amount: 1336.67, frequency: 'Monthly', date: '2025-11-14' },
                 ]
             },
         ];
@@ -889,6 +1130,56 @@
             const [searchTerm, setSearchTerm] = useState('');
             const [statusFilter, setStatusFilter] = useState('all');
             const [sidebarOpen, setSidebarOpen] = useState(false);
+
+            // Get today's date and one week from now
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const oneWeekFromNow = new Date(today);
+            oneWeekFromNow.setDate(oneWeekFromNow.getDate() + 7);
+
+            // Helper function to format dates
+            const formatDate = (dateString) => {
+                const date = new Date(dateString);
+                const options = { month: 'short', day: 'numeric', year: 'numeric' };
+                return date.toLocaleDateString('en-US', options);
+            };
+
+            // Helper function to get relative date label
+            const getDateLabel = (dateString) => {
+                const dueDate = new Date(dateString);
+                dueDate.setHours(0, 0, 0, 0);
+                const diffTime = dueDate - today;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                if (diffDays < 0) return { text: 'Overdue', class: 'overdue' };
+                if (diffDays === 0) return { text: 'Due Today', class: 'due-today' };
+                if (diffDays === 1) return { text: 'Due Tomorrow', class: 'due-soon' };
+                if (diffDays <= 7) return { text: `Due in ${diffDays} days`, class: 'due-soon' };
+                return null;
+            };
+
+            // Get upcoming payments (today through 1 week, active only)
+            const upcomingPayments = customers
+                .filter(c => {
+                    if (c.status !== 'active') return false;
+                    const dueDate = new Date(c.dueDate);
+                    dueDate.setHours(0, 0, 0, 0);
+                    return dueDate >= today && dueDate <= oneWeekFromNow;
+                })
+                .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+
+            // Get all recent payments (from all customers) and sort by date
+            const recentPayments = customers
+                .flatMap(customer => 
+                    customer.payments.map(payment => ({
+                        ...payment,
+                        customerName: customer.name,
+                        customerEmail: customer.email,
+                        customerId: customer.id
+                    }))
+                )
+                .sort((a, b) => new Date(b.date) - new Date(a.date))
+                .slice(0, 20); // Show last 20 payments
 
             // Calculate stats
             const activeCustomers = customers.filter(c => c.status === 'active');
@@ -1114,7 +1405,7 @@
                                                     <td>{customer.email}</td>
                                                     <td className="amount">${customer.amount.toLocaleString()}</td>
                                                     <td>{customer.frequency}</td>
-                                                    <td>{customer.dueDate}</td>
+                                                    <td>{formatDate(customer.dueDate)}</td>
                                                     <td>
                                                         <span className={`status-badge status-${customer.status}`}>
                                                             {customer.status}
@@ -1247,9 +1538,135 @@
                         )}
 
                         {view === 'payments' && (
-                            <div className="header">
-                                <h1>Coming Soon: Payments View</h1>
-                            </div>
+                            <>
+                                <div className="header">
+                                    <h1>Payments</h1>
+                                </div>
+
+                                <div className="stats-grid">
+                                    <div className="stat-card">
+                                        <div className="stat-label">Upcoming (7 Days)</div>
+                                        <div className="stat-value stat-accent">{upcomingPayments.length}</div>
+                                    </div>
+                                    <div className="stat-card">
+                                        <div className="stat-label">Expected Revenue</div>
+                                        <div className="stat-value">${upcomingPayments.reduce((sum, c) => sum + c.amount, 0).toLocaleString()}</div>
+                                    </div>
+                                    <div className="stat-card">
+                                        <div className="stat-label">Recent Payments</div>
+                                        <div className="stat-value">{recentPayments.length}</div>
+                                    </div>
+                                    <div className="stat-card">
+                                        <div className="stat-label">Total Collected</div>
+                                        <div className="stat-value" style={{color: 'var(--success)'}}>${recentPayments.reduce((sum, p) => sum + p.amount, 0).toLocaleString()}</div>
+                                    </div>
+                                </div>
+
+                                <div className="payments-grid">
+                                    {/* Upcoming Payments */}
+                                    <div className="payment-section">
+                                        <div className="payment-section-header">
+                                            <span className="payment-section-icon">📅</span>
+                                            <h3 className="payment-section-title">Upcoming Payments</h3>
+                                            <span className="payment-section-count">{upcomingPayments.length}</span>
+                                        </div>
+                                        <div className="payment-cards">
+                                            {upcomingPayments.length > 0 ? (
+                                                upcomingPayments.map(customer => {
+                                                    const dateLabel = getDateLabel(customer.dueDate);
+                                                    return (
+                                                        <div 
+                                                            key={customer.id} 
+                                                            className="payment-card"
+                                                            onClick={() => viewCustomer(customer)}
+                                                        >
+                                                            <div className="payment-card-header">
+                                                                <div>
+                                                                    <div className="payment-customer-name">{customer.name}</div>
+                                                                    <div className="payment-customer-email">{customer.email}</div>
+                                                                </div>
+                                                                <div className="payment-card-amount">${customer.amount.toLocaleString()}</div>
+                                                            </div>
+                                                            <div className="payment-card-footer">
+                                                                <div className="payment-date-info">
+                                                                    <span>📆</span>
+                                                                    <span>{formatDate(customer.dueDate)}</span>
+                                                                </div>
+                                                                <div style={{display: 'flex', gap: '0.5rem', alignItems: 'center'}}>
+                                                                    <span className="payment-frequency">{customer.frequency}</span>
+                                                                    {dateLabel && (
+                                                                        <span className={`payment-due-badge ${dateLabel.class}`}>
+                                                                            {dateLabel.text}
+                                                                        </span>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                })
+                                            ) : (
+                                                <div className="empty-state">
+                                                    <div className="empty-state-icon">✅</div>
+                                                    <div>No upcoming payments in the next 7 days</div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {/* Recent Payments */}
+                                    <div className="payment-section">
+                                        <div className="payment-section-header">
+                                            <span className="payment-section-icon">💰</span>
+                                            <h3 className="payment-section-title">Recent Payments</h3>
+                                            <span className="payment-section-count">{recentPayments.length}</span>
+                                        </div>
+                                        <div className="payment-cards">
+                                            {recentPayments.length > 0 ? (
+                                                recentPayments.map(payment => (
+                                                    <div 
+                                                        key={`${payment.customerId}-${payment.id}`} 
+                                                        className="recent-payment-card"
+                                                        onClick={() => {
+                                                            const customer = customers.find(c => c.id === payment.customerId);
+                                                            if (customer) viewCustomer(customer);
+                                                        }}
+                                                    >
+                                                        <div className="payment-card-header">
+                                                            <div>
+                                                                <div className="payment-customer-name">{payment.customerName}</div>
+                                                                <div className="payment-customer-email">{payment.customerEmail}</div>
+                                                            </div>
+                                                            <div className="payment-card-amount recent-payment-amount">
+                                                                ${payment.amount.toLocaleString()}
+                                                            </div>
+                                                        </div>
+                                                        <div className="payment-card-footer">
+                                                            <div className="payment-date-info">
+                                                                <span>📆</span>
+                                                                <span>{formatDate(payment.date)}</span>
+                                                                <span>•</span>
+                                                                <span>{payment.method}</span>
+                                                                {payment.transaction_id && (
+                                                                    <>
+                                                                        <span>•</span>
+                                                                        <span>{payment.transaction_id}</span>
+                                                                    </>
+                                                                )}
+                                                            </div>
+                                                            <span className="payment-completed-badge">Completed</span>
+                                                        </div>
+                                                    </div>
+                                                ))
+                                            ) : (
+                                                <div className="empty-state">
+                                                    <div className="empty-state-icon">💳</div>
+                                                    <div>No recent payments recorded</div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            </>
                         )}
 
                         {view === 'reports' && (
