@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Holiday Inn Times Square — Nearby Food Map</title>
+
+  <!-- Leaflet -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
+  <style>
+    :root{
+      --bg:#0b0f17;
+      --panel:#101827;
+      --card:#121c2e;
+      --text:#e7eefc;
+      --muted:#a9b7d6;
+      --border:rgba(255,255,255,.10);
+      --accent:#7dd3fc;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      background: radial-gradient(1200px 700px at 20% -10%, rgba(125,211,252,.18), transparent 55%),
+                  radial-gradient(1000px 700px at 85% 0%, rgba(167,139,250,.12), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+    }
+    header{
+      padding:20px 18px 10px;
+      max-width:1200px;
+      margin:0 auto;
+    }
+    h1{
+      font-size:20px;
+      margin:0 0 6px;
+      letter-spacing:.2px;
+    }
+    .sub{
+      margin:0;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.4;
+    }
+    .wrap{
+      max-width:1200px;
+      margin:0 auto;
+      padding:14px 18px 26px;
+      display:grid;
+      grid-template-columns: 1.25fr .75fr;
+      gap:14px;
+    }
+    @media (max-width: 980px){
+      .wrap{grid-template-columns:1fr}
+    }
+
+    .map-panel{
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      border:1px solid var(--border);
+      border-radius:18px;
+      overflow:hidden;
+      box-shadow: 0 18px 50px rgba(0,0,0,.35);
+    }
+    #map{ height: 560px; width:100%; }
+    @media (max-width: 980px){
+      #map{ height: 520px; }
+    }
+
+    .list-panel{
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      border:1px solid var(--border);
+      border-radius:18px;
+      box-shadow: 0 18px 50px rgba(0,0,0,.35);
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      min-height:560px;
+    }
+    .list-head{
+      padding:14px 14px 10px;
+      border-bottom:1px solid var(--border);
+      background: rgba(16,24,39,.55);
+      backdrop-filter: blur(6px);
+    }
+    .pillrow{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:10px;
+    }
+    .pill{
+      font-size:12px;
+      color:var(--muted);
+      border:1px solid var(--border);
+      padding:6px 10px;
+      border-radius:999px;
+    }
+    .cards{
+      padding:12px;
+      overflow:auto;
+    }
+    .card{
+      background: rgba(18,28,46,.75);
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:12px;
+      margin-bottom:10px;
+    }
+    .card:last-child{margin-bottom:0}
+    .card h3{
+      margin:0 0 6px;
+      font-size:14px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    .badge{
+      font-size:11px;
+      padding:3px 8px;
+      border-radius:999px;
+      border:1px solid rgba(125,211,252,.35);
+      color: var(--accent);
+      background: rgba(125,211,252,.10);
+    }
+    .meta{
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.4;
+      margin:0 0 10px;
+    }
+    .actions{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    a.btn{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      text-decoration:none;
+      color:var(--text);
+      border:1px solid var(--border);
+      padding:8px 10px;
+      border-radius:12px;
+      font-size:12px;
+      background: rgba(255,255,255,.03);
+    }
+    a.btn:hover{border-color: rgba(125,211,252,.35)}
+    .hint{
+      padding:10px 14px 14px;
+      border-top:1px solid var(--border);
+      color:var(--muted);
+      font-size:12px;
+      background: rgba(16,24,39,.35);
+    }
+    .hint code{
+      color:#c7d2fe;
+      background: rgba(255,255,255,.05);
+      padding:2px 6px;
+      border-radius:8px;
+      border:1px solid rgba(255,255,255,.10);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Holiday Inn Times Square — Food Map</h1>
+    <p class="sub">Holiday Inn is the focal point. Click markers for quick actions, or use the cards below for links + distance.</p>
+  </header>
+
+  <main class="wrap">
+    <section class="map-panel">
+      <div id="map"></div>
+    </section>
+
+    <aside class="list-panel">
+      <div class="list-head">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+          <div>
+            <div style="font-size:14px; font-weight:600;">Stops</div>
+            <div style="font-size:12px; color:var(--muted); margin-top:2px;">
+              Sorted by distance from the hotel
+            </div>
+          </div>
+          <a class="btn" id="openAll" href="#" title="Open all in new tabs">Open all links</a>
+        </div>
+        <div class="pillrow">
+          <span class="pill" id="countPill">0 locations</span>
+          <span class="pill">Map: OpenStreetMap</span>
+          <span class="pill">No geocoding required</span>
+        </div>
+      </div>
+
+      <div class="cards" id="cards"></div>
+
+      <div class="hint">
+        If you ever use a version that geocodes names, don’t open it as <code>file://</code>.
+        Use a local server (example: <code>python -m http.server</code>) to avoid browser/CORS blocks.
+      </div>
+    </aside>
+  </main>
+
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+  ></script>
+
+  <script>
+    // --- Data (hardcoded coordinates; no geocoding calls) ---
+    const hotel = {
+      name: "Holiday Inn Times Square",
+      link: "https://maps.app.goo.gl/j8mMS16NoXiFn7sP8",
+      lat: 40.7552207,
+      lng: -73.9916596
+    };
+
+    const places = [
+      {
+        name: "Bohemian Spirit · New York, NY",
+        note: "Eastern European / Czech spot (as listed).",
+        link: "https://share.google/PNHE5435koeEZQ9Gn",
+        lat: 40.7690580,
+        lng: -73.9565904
+      },
+      {
+        name: "Charles Fried Chicken",
+        note: "Charles Pan-Fried Chicken (chain).",
+        link: "https://share.google/IWemS9e3LZWPOMRsR",
+        lat: 40.8235771,
+        lng: -73.9440803
+      },
+      {
+        name: "Los Tacos No. 1",
+        note: "Popular taco spot (Times Square area).",
+        link: "https://share.google/f1i7Oo4kE2sYxnUyW",
+        lat: 40.7574218,
+        lng: -73.9878145
+      },
+      {
+        name: "Bagels",
+        note: "Bagel stop (using Midtown bagel coordinates).",
+        link: "https://share.google/uVnolam4fpYjkxitu",
+        lat: 40.7525226,
+        lng: -73.9924763
+      },
+      {
+        name: "Michelin rated Ramen",
+        note: "Tonchin (MICHELIN listing) area.",
+        link: "https://share.google/urjPQLRF4Ezo8Njsg",
+        lat: 40.7502290,
+        lng: -73.9845350
+      },
+      {
+        name: "Upside Pizza next door",
+        note: "Slice shop near the hotel.",
+        link: "https://share.google/vADqOMfhKC4q3Si2J",
+        lat: 40.7551601,
+        lng: -73.9910642
+      },
+      {
+        name: "Liberty bagels",
+        note: "Liberty Bagels Midtown.",
+        link: "https://share.google/YEyiaS6Nio3tbzRY7",
+        lat: 40.7525226,
+        lng: -73.9924763
+      },
+      {
+        name: "Chinese food",
+        note: "Using 728 8th Ave area coordinates.",
+        link: "https://share.google/ZFhDCxMrdFQvtoXz6",
+        lat: 40.76022,
+        lng: -73.98863
+      }
+    ];
+
+    // --- Helpers ---
+    function haversineMiles(a, b) {
+      const toRad = (d) => d * Math.PI / 180;
+      const R = 3958.7613; // miles
+      const dLat = toRad(b.lat - a.lat);
+      const dLng = toRad(b.lng - a.lng);
+      const lat1 = toRad(a.lat);
+      const lat2 = toRad(b.lat);
+      const s =
+        Math.sin(dLat / 2) ** 2 +
+        Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2;
+      return 2 * R * Math.asin(Math.sqrt(s));
+    }
+
+    function escapeHtml(str){
+      return String(str).replace(/[&<>"']/g, m => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+      }[m]));
+    }
+
+    // --- Build map ---
+    const map = L.map("map", {
+      zoomControl: true,
+      scrollWheelZoom: true
+    }).setView([hotel.lat, hotel.lng], 15);
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    const hotelIcon = L.divIcon({
+      className: "",
+      html: `
+        <div style="
+          width:18px;height:18px;border-radius:999px;
+          background:rgba(125,211,252,.95);
+          border:2px solid rgba(15,23,42,.95);
+          box-shadow:0 10px 20px rgba(0,0,0,.35);
+        "></div>
+      `,
+      iconSize: [18, 18],
+      iconAnchor: [9, 9]
+    });
+
+    const placeIcon = L.divIcon({
+      className: "",
+      html: `
+        <div style="
+          width:14px;height:14px;border-radius:999px;
+          background:rgba(167,139,250,.95);
+          border:2px solid rgba(15,23,42,.95);
+          box-shadow:0 10px 20px rgba(0,0,0,.35);
+        "></div>
+      `,
+      iconSize: [14, 14],
+      iconAnchor: [7, 7]
+    });
+
+    const bounds = L.latLngBounds();
+
+    const hotelMarker = L.marker([hotel.lat, hotel.lng], { icon: hotelIcon })
+      .addTo(map)
+      .bindPopup(`
+        <div style="min-width:220px">
+          <div style="font-weight:700; margin-bottom:4px;">${escapeHtml(hotel.name)}</div>
+          <a href="${hotel.link}" target="_blank" rel="noopener">Open in Google Maps</a>
+        </div>
+      `);
+
+    bounds.extend([hotel.lat, hotel.lng]);
+
+    // compute distances + sort
+    const enriched = places.map(p => ({
+      ...p,
+      miles: haversineMiles(hotel, p)
+    })).sort((a,b) => a.miles - b.miles);
+
+    // markers + optional lines
+    enriched.forEach((p) => {
+      const m = L.marker([p.lat, p.lng], { icon: placeIcon }).addTo(map);
+      m.bindPopup(`
+        <div style="min-width:240px">
+          <div style="font-weight:700; margin-bottom:4px;">${escapeHtml(p.name)}</div>
+          <div style="color:#6b7280; font-size:12px; margin-bottom:8px;">
+            ~${p.miles.toFixed(2)} mi from hotel
+          </div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <a href="${p.link}" target="_blank" rel="noopener">Open link</a>
+            <a href="https://www.openstreetmap.org/?mlat=${p.lat}&mlon=${p.lng}#map=18/${p.lat}/${p.lng}" target="_blank" rel="noopener">OSM</a>
+          </div>
+        </div>
+      `);
+
+      // faint line to hotel (nice for visual grouping)
+      L.polyline([[hotel.lat, hotel.lng], [p.lat, p.lng]], {
+        weight: 2,
+        opacity: 0.25
+      }).addTo(map);
+
+      bounds.extend([p.lat, p.lng]);
+    });
+
+    map.fitBounds(bounds.pad(0.12));
+
+    // --- Cards ---
+    const cardsEl = document.getElementById("cards");
+    document.getElementById("countPill").textContent = `${enriched.length + 1} locations`;
+
+    // hotel card first
+    const hotelCard = document.createElement("div");
+    hotelCard.className = "card";
+    hotelCard.innerHTML = `
+      <h3>${escapeHtml(hotel.name)} <span class="badge">Focal point</span></h3>
+      <p class="meta">Center marker. Click it on the map to open Google Maps.</p>
+      <div class="actions">
+        <a class="btn" href="${hotel.link}" target="_blank" rel="noopener">Open hotel link</a>
+        <a class="btn" href="https://www.openstreetmap.org/?mlat=${hotel.lat}&mlon=${hotel.lng}#map=18/${hotel.lat}/${hotel.lng}" target="_blank" rel="noopener">View on OSM</a>
+      </div>
+    `;
+    cardsEl.appendChild(hotelCard);
+
+    // place cards
+    enriched.forEach((p, idx) => {
+      const el = document.createElement("div");
+      el.className = "card";
+      el.innerHTML = `
+        <h3>${escapeHtml(p.name)} <span class="badge">~${p.miles.toFixed(2)} mi</span></h3>
+        <p class="meta">${escapeHtml(p.note || "")}</p>
+        <div class="actions">
+          <a class="btn" href="${p.link}" target="_blank" rel="noopener">Open your link</a>
+          <a class="btn" href="https://www.google.com/maps/dir/?api=1&origin=${hotel.lat},${hotel.lng}&destination=${p.lat},${p.lng}&travelmode=walking" target="_blank" rel="noopener">Walking directions</a>
+          <a class="btn" href="#" data-pan="${p.lat},${p.lng}">Show on map</a>
+        </div>
+      `;
+      cardsEl.appendChild(el);
+    });
+
+    // wire up "Show on map"
+    cardsEl.addEventListener("click", (e) => {
+      const a = e.target.closest("a[data-pan]");
+      if(!a) return;
+      e.preventDefault();
+      const [lat, lng] = a.getAttribute("data-pan").split(",").map(Number);
+      map.setView([lat, lng], Math.max(map.getZoom(), 16), { animate: true });
+      // open the nearest marker popup by scanning layers
+      map.eachLayer(layer => {
+        if(layer && layer.getLatLng && typeof layer.openPopup === "function"){
+          const ll = layer.getLatLng();
+          if(Math.abs(ll.lat - lat) < 1e-6 && Math.abs(ll.lng - lng) < 1e-6){
+            layer.openPopup();
+          }
+        }
+      });
+    });
+
+    // "Open all links"
+    document.getElementById("openAll").addEventListener("click", (e) => {
+      e.preventDefault();
+      window.open(hotel.link, "_blank", "noopener");
+      enriched.forEach(p => window.open(p.link, "_blank", "noopener"));
+    });
+  </script>
+</body>
+</html>
