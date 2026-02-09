@@ -118,6 +118,7 @@
       display:flex;
       align-items:center;
       gap:8px;
+      flex-wrap:wrap;
     }
     .badge{
       font-size:11px;
@@ -126,6 +127,7 @@
       border:1px solid rgba(125,211,252,.35);
       color: var(--accent);
       background: rgba(125,211,252,.10);
+      white-space:nowrap;
     }
     .meta{
       color:var(--muted);
@@ -170,7 +172,7 @@
 <body>
   <header>
     <h1>Holiday Inn Times Square — Food Map</h1>
-    <p class="sub">Holiday Inn is the focal point. Click markers for quick actions, or use the cards below for links + distance.</p>
+    <p class="sub">Holiday Inn is the focal point. Click markers for quick actions, or use the cards for links + distance.</p>
   </header>
 
   <main class="wrap">
@@ -212,7 +214,7 @@
   ></script>
 
   <script>
-    // --- Data (hardcoded coordinates; no geocoding calls) ---
+    // --- Hotel (focal point) ---
     const hotel = {
       name: "Holiday Inn Times Square",
       link: "https://maps.app.goo.gl/j8mMS16NoXiFn7sP8",
@@ -220,6 +222,8 @@
       lng: -73.9916596
     };
 
+    // --- Places (hardcoded coords; no geocoding calls) ---
+    // If you want pin-perfect placement, tweak lat/lng values here.
     const places = [
       {
         name: "Bohemian Spirit · New York, NY",
@@ -243,39 +247,63 @@
         lng: -73.9878145
       },
       {
-        name: "Bagels",
-        note: "Bagel stop (using Midtown bagel coordinates).",
-        link: "https://share.google/uVnolam4fpYjkxitu",
-        lat: 40.7525226,
-        lng: -73.9924763
-      },
-      {
-        name: "Michelin rated Ramen",
-        note: "Tonchin (MICHELIN listing) area.",
-        link: "https://share.google/urjPQLRF4Ezo8Njsg",
-        lat: 40.7502290,
-        lng: -73.9845350
-      },
-      {
-        name: "Upside Pizza next door",
+        name: "Upside Pizza (next door)",
         note: "Slice shop near the hotel.",
         link: "https://share.google/vADqOMfhKC4q3Si2J",
         lat: 40.7551601,
         lng: -73.9910642
       },
       {
-        name: "Liberty bagels",
-        note: "Liberty Bagels Midtown.",
+        name: "Liberty Bagels",
+        note: "Bagels (Midtown).",
         link: "https://share.google/YEyiaS6Nio3tbzRY7",
         lat: 40.7525226,
         lng: -73.9924763
       },
       {
+        name: "Bagels",
+        note: "Bagel stop (your link has the exact place).",
+        link: "https://share.google/uVnolam4fpYjkxitu",
+        lat: 40.7525226,
+        lng: -73.9924763
+      },
+      {
+        name: "Michelin rated Ramen",
+        note: "Ramen option (link has exact place).",
+        link: "https://share.google/urjPQLRF4Ezo8Njsg",
+        lat: 40.7502290,
+        lng: -73.9845350
+      },
+      {
         name: "Chinese food",
-        note: "Using 728 8th Ave area coordinates.",
+        note: "Chinese option (your link has the exact place).",
         link: "https://share.google/ZFhDCxMrdFQvtoXz6",
         lat: 40.76022,
         lng: -73.98863
+      },
+
+      /* --- ADDED --- */
+      {
+        name: "Sushi — SUGARFISH by sushi nozawa",
+        note: "SUGARFISH (Midtown West). Coordinates are set near 210 W 56th St; tweak if you want exact pin.",
+        link: "https://share.google/OES5WVfBco9KXL1iw",
+        lat: 40.76495,
+        lng: -73.97990
+      },
+      {
+        name: "Omusubi Gonbei (Rice balls)",
+        note: "Omusubi Gonbei at Katagiri (370 Lexington Ave area).",
+        link: "https://share.google/TrmpamEDUOUwhwsHV",
+        // Katagiri Fast Food coordinates (Omusubi Gonbei is inside / co-located)
+        lat: 40.7509194,
+        lng: -73.9771424
+      },
+      {
+        name: "Angelina Bakery",
+        note: "Angelina Bakery (Times Square). Coordinates set near 1675 Broadway; tweak for exact pin if needed.",
+        link: "https://share.google/JUyJuow6u3M0acOfE",
+        lat: 40.76155,
+        lng: -73.98370
       }
     ];
 
@@ -340,7 +368,7 @@
 
     const bounds = L.latLngBounds();
 
-    const hotelMarker = L.marker([hotel.lat, hotel.lng], { icon: hotelIcon })
+    L.marker([hotel.lat, hotel.lng], { icon: hotelIcon })
       .addTo(map)
       .bindPopup(`
         <div style="min-width:220px">
@@ -357,26 +385,26 @@
       miles: haversineMiles(hotel, p)
     })).sort((a,b) => a.miles - b.miles);
 
-    // markers + optional lines
     enriched.forEach((p) => {
       const m = L.marker([p.lat, p.lng], { icon: placeIcon }).addTo(map);
       m.bindPopup(`
         <div style="min-width:240px">
           <div style="font-weight:700; margin-bottom:4px;">${escapeHtml(p.name)}</div>
-          <div style="color:#6b7280; font-size:12px; margin-bottom:8px;">
+          <div style="color:#94a3b8; font-size:12px; margin-bottom:8px;">
             ~${p.miles.toFixed(2)} mi from hotel
           </div>
-          <div style="display:flex; gap:8px; flex-wrap:wrap;">
-            <a href="${p.link}" target="_blank" rel="noopener">Open link</a>
-            <a href="https://www.openstreetmap.org/?mlat=${p.lat}&mlon=${p.lng}#map=18/${p.lat}/${p.lng}" target="_blank" rel="noopener">OSM</a>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <a href="${p.link}" target="_blank" rel="noopener">Open your link</a>
+            <a href="https://www.google.com/maps/dir/?api=1&origin=${hotel.lat},${hotel.lng}&destination=${p.lat},${p.lng}&travelmode=walking"
+               target="_blank" rel="noopener">Walking directions</a>
           </div>
         </div>
       `);
 
-      // faint line to hotel (nice for visual grouping)
+      // faint line to hotel for visual grouping
       L.polyline([[hotel.lat, hotel.lng], [p.lat, p.lng]], {
         weight: 2,
-        opacity: 0.25
+        opacity: 0.22
       }).addTo(map);
 
       bounds.extend([p.lat, p.lng]);
@@ -396,13 +424,13 @@
       <p class="meta">Center marker. Click it on the map to open Google Maps.</p>
       <div class="actions">
         <a class="btn" href="${hotel.link}" target="_blank" rel="noopener">Open hotel link</a>
-        <a class="btn" href="https://www.openstreetmap.org/?mlat=${hotel.lat}&mlon=${hotel.lng}#map=18/${hotel.lat}/${hotel.lng}" target="_blank" rel="noopener">View on OSM</a>
+        <a class="btn" href="https://www.openstreetmap.org/?mlat=${hotel.lat}&mlon=${hotel.lng}#map=18/${hotel.lat}/${hotel.lng}"
+           target="_blank" rel="noopener">View on OSM</a>
       </div>
     `;
     cardsEl.appendChild(hotelCard);
 
-    // place cards
-    enriched.forEach((p, idx) => {
+    enriched.forEach((p) => {
       const el = document.createElement("div");
       el.className = "card";
       el.innerHTML = `
@@ -410,7 +438,8 @@
         <p class="meta">${escapeHtml(p.note || "")}</p>
         <div class="actions">
           <a class="btn" href="${p.link}" target="_blank" rel="noopener">Open your link</a>
-          <a class="btn" href="https://www.google.com/maps/dir/?api=1&origin=${hotel.lat},${hotel.lng}&destination=${p.lat},${p.lng}&travelmode=walking" target="_blank" rel="noopener">Walking directions</a>
+          <a class="btn" href="https://www.google.com/maps/dir/?api=1&origin=${hotel.lat},${hotel.lng}&destination=${p.lat},${p.lng}&travelmode=walking"
+             target="_blank" rel="noopener">Walking directions</a>
           <a class="btn" href="#" data-pan="${p.lat},${p.lng}">Show on map</a>
         </div>
       `;
@@ -424,7 +453,8 @@
       e.preventDefault();
       const [lat, lng] = a.getAttribute("data-pan").split(",").map(Number);
       map.setView([lat, lng], Math.max(map.getZoom(), 16), { animate: true });
-      // open the nearest marker popup by scanning layers
+
+      // open the marker popup at those coords
       map.eachLayer(layer => {
         if(layer && layer.getLatLng && typeof layer.openPopup === "function"){
           const ll = layer.getLatLng();
