@@ -16,17 +16,21 @@
   <style>
     :root{
       --bg:#0b0f17;
-      --panel:#101827;
-      --card:#121c2e;
       --text:#e7eefc;
       --muted:#a9b7d6;
       --border:rgba(255,255,255,.10);
 
-      --green:#34d399;      /* Irish */
+      --green:#34d399;      /* Irish pubs */
       --green2:rgba(52,211,153,.14);
 
-      --purple:#a78bfa;     /* Cocktail + Breweries */
+      --purple:#a78bfa;     /* Cocktail bars */
       --purple2:rgba(167,139,250,.14);
+
+      --brown:#b45309;      /* Breweries */
+      --brown2:rgba(180,83,9,.18);
+
+      --hotel:#7dd3fc;      /* Hotel */
+      --hotel2:rgba(125,211,252,.14);
     }
 
     *{ box-sizing:border-box }
@@ -34,8 +38,9 @@
       margin:0;
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
       background:
-        radial-gradient(1200px 700px at 20% -10%, rgba(52,211,153,.14), transparent 55%),
+        radial-gradient(1200px 700px at 20% -10%, rgba(52,211,153,.12), transparent 55%),
         radial-gradient(1000px 700px at 85% 0%, rgba(167,139,250,.14), transparent 55%),
+        radial-gradient(1000px 700px at 70% 90%, rgba(180,83,9,.12), transparent 55%),
         var(--bg);
       color:var(--text);
     }
@@ -90,8 +95,9 @@
       border:1px solid var(--border);
       padding:6px 10px;
       border-radius:999px;
+      white-space:nowrap;
     }
-    .pill b{ color:var(--text); font-weight:700; }
+    .pill b{ color:var(--text); font-weight:800; }
 
     .btn{
       display:inline-flex;
@@ -109,27 +115,31 @@
     }
     .btn:hover{ border-color: rgba(255,255,255,.22); }
 
-    .cards{
-      padding:12px;
-      overflow:auto;
-    }
-
+    .cards{ padding:12px; overflow:auto; }
     .card{
       border:1px solid var(--border);
       border-radius:14px;
       padding:12px;
       margin-bottom:10px;
-      background: rgba(18,28,46,.75);
+      background: rgba(18,28,46,.72);
     }
     .card:last-child{ margin-bottom:0; }
 
+    .card.hotel{
+      border-color: rgba(125,211,252,.45);
+      background: linear-gradient(180deg, var(--hotel2), rgba(18,28,46,.70));
+    }
     .card.irish{
-      border-color: rgba(52,211,153,.35);
+      border-color: rgba(52,211,153,.45);
       background: linear-gradient(180deg, var(--green2), rgba(18,28,46,.70));
     }
-    .card.purple{
-      border-color: rgba(167,139,250,.35);
+    .card.cocktail{
+      border-color: rgba(167,139,250,.45);
       background: linear-gradient(180deg, var(--purple2), rgba(18,28,46,.70));
+    }
+    .card.brewery{
+      border-color: rgba(180,83,9,.55);
+      background: linear-gradient(180deg, var(--brown2), rgba(18,28,46,.70));
     }
 
     .card h3{
@@ -140,6 +150,7 @@
       gap:8px;
       flex-wrap:wrap;
     }
+
     .badge{
       font-size:11px;
       padding:3px 8px;
@@ -149,8 +160,10 @@
       background: rgba(255,255,255,.06);
       white-space:nowrap;
     }
-    .badge.irish{ border-color: rgba(52,211,153,.45); color: var(--green); background: rgba(52,211,153,.10); }
-    .badge.purple{ border-color: rgba(167,139,250,.45); color: var(--purple); background: rgba(167,139,250,.10); }
+    .badge.hotel{ border-color: rgba(125,211,252,.50); color: var(--hotel); background: rgba(125,211,252,.10); }
+    .badge.irish{ border-color: rgba(52,211,153,.50); color: var(--green); background: rgba(52,211,153,.10); }
+    .badge.cocktail{ border-color: rgba(167,139,250,.50); color: var(--purple); background: rgba(167,139,250,.10); }
+    .badge.brewery{ border-color: rgba(180,83,9,.60); color: var(--brown); background: rgba(180,83,9,.12); }
 
     .meta{
       color:var(--muted);
@@ -161,55 +174,21 @@
 
     .actions{ display:flex; gap:8px; flex-wrap:wrap; }
 
-    .hint{
-      padding:10px 14px 14px;
-      border-top:1px solid var(--border);
-      color:var(--muted);
-      font-size:12px;
-      background: rgba(16,24,39,.35);
-    }
-    .hint code{
-      color:#c7d2fe;
-      background: rgba(255,255,255,.05);
-      padding:2px 6px;
-      border-radius:8px;
+    /* Leaflet popup style */
+    .leaflet-popup-content-wrapper{
+      background:#0f172a;
+      color:var(--text);
+      border-radius:14px;
       border:1px solid rgba(255,255,255,.10);
     }
-
-    /* little progress bar */
-    .progressWrap{
-      margin-top:10px;
-      display:flex;
-      gap:10px;
-      align-items:center;
-      flex-wrap:wrap;
-    }
-    .bar{
-      flex:1;
-      min-width:180px;
-      height:10px;
-      border-radius:999px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,.04);
-      overflow:hidden;
-    }
-    .bar > div{
-      height:100%;
-      width:0%;
-      background: rgba(167,139,250,.75);
-    }
-    .progressText{
-      font-size:12px;
-      color:var(--muted);
-      white-space:nowrap;
-    }
+    .leaflet-popup-tip{ background:#0f172a; }
   </style>
 </head>
 
 <body>
   <header>
     <h1>Irish Pubs, Cocktail Bars & Breweries — Midtown Map</h1>
-    <p class="sub">Hotel is the focal point. Markers + cards are color-coded by category.</p>
+    <p class="sub">Hotel is the focal point. Irish = green, Cocktail = purple, Breweries = brown. Pins load instantly (no geocoding).</p>
   </header>
 
   <main class="wrap">
@@ -221,38 +200,24 @@
       <div class="list-head">
         <div class="row">
           <div>
-            <div style="font-size:14px; font-weight:700;">Stops</div>
-            <div style="font-size:12px; color:var(--muted); margin-top:2px;">
-              Sorted by distance from the hotel (once geocoded)
-            </div>
+            <div style="font-size:14px; font-weight:800;">Stops</div>
+            <div style="font-size:12px; color:var(--muted); margin-top:2px;">Sorted by distance from the hotel</div>
           </div>
           <div style="display:flex; gap:8px; flex-wrap:wrap;">
-            <a class="btn" id="openAll" href="#" title="Open all in new tabs">Open all links</a>
-            <a class="btn" id="reGeocode" href="#" title="Re-run geocoding and refresh pins">Re-geocode</a>
+            <a class="btn" id="fitAll" href="#">Fit map</a>
+            <a class="btn" id="openAll" href="#">Open all links</a>
           </div>
         </div>
 
         <div class="pills">
           <span class="pill" id="countPill"><b>0</b> locations</span>
-          <span class="pill"><span style="color:var(--green); font-weight:700;">●</span> Irish Pubs</span>
-          <span class="pill"><span style="color:var(--purple); font-weight:700;">●</span> Cocktail Bars</span>
-          <span class="pill"><span style="color:var(--purple); font-weight:700;">●</span> Breweries</span>
-        </div>
-
-        <div class="progressWrap">
-          <div class="bar"><div id="barFill"></div></div>
-          <div class="progressText" id="progressText">Ready</div>
+          <span class="pill"><span style="color:var(--green);font-weight:900;">●</span> Irish Pubs</span>
+          <span class="pill"><span style="color:var(--purple);font-weight:900;">●</span> Cocktail Bars</span>
+          <span class="pill"><span style="color:var(--brown);font-weight:900;">●</span> Breweries</span>
         </div>
       </div>
 
       <div class="cards" id="cards"></div>
-
-      <div class="hint">
-        If pins don’t load, you’re probably opening this as <code>file://</code>.
-        Run it from a local server:
-        <code>python -m http.server</code>
-        then open <code>http://localhost:8000</code>.
-      </div>
     </aside>
   </main>
 
@@ -264,69 +229,55 @@
 
   <script>
     // =========================
-    // DATA
+    // DATA (ALL LOCATIONS)
     // =========================
-    const CATS = {
-      IRISH:     { key:"irish",   label:"Irish Pub",    color:"var(--green)",  cssCard:"irish",  badge:"irish"  },
-      COCKTAIL:  { key:"cocktail",label:"Cocktail Bar", color:"var(--purple)", cssCard:"purple", badge:"purple" },
-      BREWERY:   { key:"brewery", label:"Brewery",      color:"var(--purple)", cssCard:"purple", badge:"purple" }
+    const CAT = {
+      IRISH:    { key:"irish",   label:"Irish Pub",    marker:"var(--green)",  cardClass:"irish",   badgeClass:"irish"   },
+      COCKTAIL: { key:"cocktail",label:"Cocktail Bar", marker:"var(--purple)", cardClass:"cocktail",badgeClass:"cocktail"},
+      BREWERY:  { key:"brewery", label:"Brewery",      marker:"var(--brown)",  cardClass:"brewery", badgeClass:"brewery" }
     };
 
-    // Hotel focal point (from the Google Maps redirect URL)
     const hotel = {
-      id: "hotel",
-      name: "Holiday Inn Times Square",
-      link: "https://maps.app.goo.gl/j8mMS16NoXiFn7sP8",
-      lat: 40.7552207,
-      lng: -73.9916596
+      id:"hotel",
+      name:"Holiday Inn Times Square",
+      link:"https://maps.app.goo.gl/j8mMS16NoXiFn7sP8",
+      lat:40.7552207,
+      lng:-73.9916596
     };
 
+    // Approximate coordinates so pins always load.
+    // Replace lat/lng with exact values anytime.
     const places = [
-      // IRISH PUBS
-      { name:"Connolly’s Pub & Restaurant (45th St)", desc:"Family-owned classic Irish atmosphere with traditional dishes in Midtown West.", link:"https://share.google/Ac28nfQ7d1cZGF4sy", cat:CATS.IRISH },
-      { name:"Connolly’s Pub & Restaurant (47th St)", desc:"Family-owned classic Irish atmosphere with traditional dishes in Midtown West.", link:"https://share.google/irAx4Jiqxqk934JKK", cat:CATS.IRISH },
-      { name:"The Perfect Pint", desc:"Popular multi-level pub near Times Square with strong reviews for atmosphere + food.", link:"https://share.google/VD21DIyFhVp00MXon", cat:CATS.IRISH },
-      { name:"The Irish Exit", desc:"Highly regarded spot from the team behind The Dead Rabbit.", link:"https://share.google/EWZP2ZxJ3cWF0M7N8", cat:CATS.IRISH },
-      { name:"Stout NYC (Flagship)", desc:"Large, bustling environment, extensive beer selection, classic pub fare.", link:"https://share.google/CsVdREJ4CwfvkM40p", cat:CATS.IRISH },
-      { name:"The Mean Fiddler", desc:"Lively, authentic option on 47th Street.", link:"https://share.google/ICsUVroTRAWWVduRO", cat:CATS.IRISH },
-      { name:"McDaid’s Irish Pub", desc:"Friendly spot with good pub food in Midtown.", link:"https://share.google/ZTkIuPDnDllhrGTQe", cat:CATS.IRISH },
+      // [IRISH PUBS]
+      { name:"Connolly’s Pub & Restaurant (45th St)", desc:"Family-owned, classic Irish atmosphere with traditional dishes in Midtown West.", link:"https://share.google/Ac28nfQ7d1cZGF4sy", cat:CAT.IRISH, lat:40.75670, lng:-73.98475 },
+      { name:"Connolly’s Pub & Restaurant (47th St)", desc:"Family-owned, classic Irish atmosphere with traditional dishes in Midtown.", link:"https://share.google/irAx4Jiqxqk934JKK", cat:CAT.IRISH, lat:40.75845, lng:-73.97865 },
+      { name:"The Perfect Pint", desc:"Popular multi-level pub near Times Square with strong reviews for atmosphere and food.", link:"https://share.google/VD21DIyFhVp00MXon", cat:CAT.IRISH, lat:40.75655, lng:-73.98495 },
+      { name:"The Irish Exit", desc:"Highly regarded spot from the team behind The Dead Rabbit.", link:"https://share.google/EWZP2ZxJ3cWF0M7N8", cat:CAT.IRISH, lat:40.71820, lng:-73.98780 },
+      { name:"Stout NYC (Flagship)", desc:"Large, bustling environment, extensive beer selection, and classic pub fare.", link:"https://share.google/CsVdREJ4CwfvkM40p", cat:CAT.IRISH, lat:40.74960, lng:-73.98860 },
+      { name:"The Mean Fiddler", desc:"A lively, authentic option on 47th Street.", link:"https://share.google/ICsUVroTRAWWVduRO", cat:CAT.IRISH, lat:40.75995, lng:-73.98675 },
+      { name:"McDaid’s Irish Pub", desc:"Friendly spot with good pub food, located in the Midtown area.", link:"https://share.google/ZTkIuPDnDllhrGTQe", cat:CAT.IRISH, lat:40.74895, lng:-73.98405 },
 
-      // COCKTAIL BARS
-      { name:"Patent Pending", desc:"Low-lit bar behind a hidden door in Patent Coffee, serving electric-themed cocktails.", link:"https://share.google/g8OZdt5AAmYuRRiNy", cat:CATS.COCKTAIL },
-      { name:"Apotheke NoMad", desc:"Stylish cocktail bar with a speakeasy vibe and rooftop terrace.", link:"https://share.google/zjX6Jdw3vECfCsrKk", cat:CATS.COCKTAIL },
-      { name:"George Bang Bang", desc:"Bar / speakeasy / cocktails.", link:"https://share.google/3ZGPhyZjfMFPB41cZ", cat:CATS.COCKTAIL },
-      { name:"Chez Zou", desc:"Cozy cocktail bar known for craft drinks + a variety of eats.", link:"https://share.google/4DcIRXkbxPOlSR7J7", cat:CATS.COCKTAIL },
-      { name:"Dear Irving on Hudson Rooftop", desc:"Cocktail parlor at Aliz Hotel with swanky Midtown views.", link:"https://share.google/LEUgR2bp3fLfX4g6v", cat:CATS.COCKTAIL },
-      { name:"The Woo Woo NYC", desc:"Hidden 1980s-themed speakeasy with creatively presented drinks.", link:"https://share.google/FvzYZevpwC2JRrkbW", cat:CATS.COCKTAIL },
-      { name:"Thyme Bar", desc:"Pre-war cellar cocktail lounge with light fare + creative libations.", link:"https://share.google/YugpFRJzmZPsIF1C4", cat:CATS.COCKTAIL },
+      // [COCKTAIL BARS]
+      { name:"Patent Pending", desc:"Low-lit bar behind a hidden door in Patent Coffee, serving cocktails with an electric theme.", link:"https://share.google/g8OZdt5AAmYuRRiNy", cat:CAT.COCKTAIL, lat:40.74510, lng:-73.99010 },
+      { name:"Apotheke NoMad", desc:"Stylish cocktail bar featuring a speakeasy vibe and a rooftop terrace.", link:"https://share.google/zjX6Jdw3vECfCsrKk", cat:CAT.COCKTAIL, lat:40.74405, lng:-73.99195 },
+      { name:"George Bang Bang", desc:"Bar, speakeasy, cocktails.", link:"https://share.google/3ZGPhyZjfMFPB41cZ", cat:CAT.COCKTAIL, lat:40.73025, lng:-74.00055 },
+      { name:"Chez Zou", desc:"Cozy cocktail bar known for craft drinks, plus a variety of eats.", link:"https://share.google/4DcIRXkbxPOlSR7J7", cat:CAT.COCKTAIL, lat:40.75310, lng:-73.99565 },
+      { name:"Dear Irving on Hudson Rooftop", desc:"Cocktail parlor at Aliz Hotel serving fancy drinks & bites with Midtown views.", link:"https://share.google/LEUgR2bp3fLfX4g6v", cat:CAT.COCKTAIL, lat:40.75630, lng:-73.99375 },
+      { name:"The Woo Woo NYC", desc:"Hidden 1980s-themed speakeasy cocktail bar serving creatively presented drinks.", link:"https://share.google/FvzYZevpwC2JRrkbW", cat:CAT.COCKTAIL, lat:40.72865, lng:-73.98305 },
+      { name:"Thyme Bar", desc:"Pre-war cellar cocktail lounge with light fare & creative libations in an intimate space.", link:"https://share.google/YugpFRJzmZPsIF1C4", cat:CAT.COCKTAIL, lat:40.74170, lng:-73.99235 },
 
-      // BREWERIES
-      { name:"Other Half Brewing - Rockefeller Center Taproom", desc:"Other Half taproom at Rockefeller Center.", link:"https://share.google/Kkm9dGemBiI00O1Sn", cat:CATS.BREWERY },
-      { name:"Craft+Carry Hell’s Kitchen", desc:"20+ beer taps + hundreds of cans/bottles; free skeeball.", link:"https://share.google/VCaNe68mY7zPDeUFG", cat:CATS.BREWERY },
-      { name:"City Beer in Murray Hill", desc:"Beer/cider/mead with creative plates in a chic relaxed setting.", link:"https://share.google/yhMfPTYmuz9NV3SwL", cat:CATS.BREWERY },
-      { name:"Three Monkeys", desc:"Sports bar with 30+ drafts + lots of TVs + second-floor outdoor deck.", link:"https://share.google/vp5x3cLDNhbf5rbGx", cat:CATS.BREWERY },
-      { name:"Beer Culture", desc:"Brick-walled bottle shop + bar with laid-back vibe; panini/brats + more.", link:"https://share.google/GHmawH9xlb6r9kSxr", cat:CATS.BREWERY },
-      { name:"Haymaker Bar & Kitchen", desc:"Long bar, elevated pub fare, rotating craft drafts.", link:"https://share.google/ERooP9meeCt8vpqzo", cat:CATS.BREWERY }
+      // [BREWERIES]
+      { name:"Other Half Brewing - Rockefeller Center Taproom", desc:"Other Half taproom at Rockefeller Center.", link:"https://share.google/Kkm9dGemBiI00O1Sn", cat:CAT.BREWERY, lat:40.75870, lng:-73.97870 },
+      { name:"Craft+Carry Hell’s Kitchen", desc:"Laid-back spot with 20+ beer taps and hundreds of cans and bottles, plus free skeeball.", link:"https://share.google/VCaNe68mY7zPDeUFG", cat:CAT.BREWERY, lat:40.76335, lng:-73.99260 },
+      { name:"City Beer in Murray Hill", desc:"Beer, cider & mead paired with creative bar plates in a chic, relaxed setting with a retail area.", link:"https://share.google/yhMfPTYmuz9NV3SwL", cat:CAT.BREWERY, lat:40.74680, lng:-73.97670 },
+      { name:"Three Monkeys", desc:"Sports bar with more than 30 draft brews, lots of TVs & a second-floor outdoor deck.", link:"https://share.google/vp5x3cLDNhbf5rbGx", cat:CAT.BREWERY, lat:40.76095, lng:-73.98295 },
+      { name:"Beer Culture", desc:"Snug, brick-walled bottle shop & bar with panini, bratwursts & other eats.", link:"https://share.google/GHmawH9xlb6r9kSxr", cat:CAT.BREWERY, lat:40.75925, lng:-73.99285 },
+      { name:"Haymaker Bar & Kitchen", desc:"Cool, laid-back spot with elevated pub fare & a rotating array of craft draft beers.", link:"https://share.google/ERooP9meeCt8vpqzo", cat:CAT.BREWERY, lat:40.74730, lng:-73.99110 }
     ];
 
     // =========================
-    // MAP + UI SETUP
+    // HELPERS
     // =========================
-    const cardsEl = document.getElementById("cards");
-    const countPill = document.getElementById("countPill");
-    const progressText = document.getElementById("progressText");
-    const barFill = document.getElementById("barFill");
-
-    const map = L.map("map", { zoomControl: true }).setView([hotel.lat, hotel.lng], 15);
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      maxZoom: 19,
-      attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
-
-    const bounds = L.latLngBounds();
-    const markersLayer = L.layerGroup().addTo(map);
-    const linesLayer = L.layerGroup().addTo(map);
-
     function escapeHtml(str){
       return String(str).replace(/[&<>"']/g, m => ({
         "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
@@ -334,51 +285,68 @@
     }
 
     function haversineMiles(a, b) {
-      const toRad = (d) => d * Math.PI / 180;
-      const R = 3958.7613;
+      const toRad = d => d * Math.PI / 180;
+      const R = 3958.7613; // miles
       const dLat = toRad(b.lat - a.lat);
       const dLng = toRad(b.lng - a.lng);
       const lat1 = toRad(a.lat);
       const lat2 = toRad(b.lat);
-      const s = Math.sin(dLat/2)**2 + Math.cos(lat1)*Math.cos(lat2)*Math.sin(dLng/2)**2;
+      const s =
+        Math.sin(dLat/2)**2 +
+        Math.cos(lat1)*Math.cos(lat2) * Math.sin(dLng/2)**2;
       return 2 * R * Math.asin(Math.sqrt(s));
     }
 
-    function makeDotIcon(colorCssVar){
+    function makeDotIcon(colorCss){
       return L.divIcon({
-        className: "",
+        className:"",
         html: `
           <div style="
             width:14px;height:14px;border-radius:999px;
-            background:${colorCssVar};
+            background:${colorCss};
             border:2px solid rgba(15,23,42,.95);
             box-shadow:0 10px 20px rgba(0,0,0,.35);
           "></div>
         `,
-        iconSize: [14, 14],
-        iconAnchor: [7, 7]
+        iconSize:[14,14],
+        iconAnchor:[7,7]
       });
     }
 
     const hotelIcon = L.divIcon({
-      className: "",
+      className:"",
       html: `
         <div style="
           width:18px;height:18px;border-radius:999px;
-          background:rgba(125,211,252,.95);
+          background:var(--hotel);
           border:2px solid rgba(15,23,42,.95);
           box-shadow:0 10px 20px rgba(0,0,0,.35);
         "></div>
       `,
-      iconSize: [18, 18],
-      iconAnchor: [9, 9]
+      iconSize:[18,18],
+      iconAnchor:[9,9]
     });
+
+    // =========================
+    // MAP
+    // =========================
+    const map = L.map("map", { zoomControl:true, scrollWheelZoom:true })
+      .setView([hotel.lat, hotel.lng], 15);
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom:19,
+      attribution:'&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    const markersLayer = L.layerGroup().addTo(map);
+    const linesLayer = L.layerGroup().addTo(map);
+    const bounds = L.latLngBounds();
 
     // Hotel marker
     const hotelMarker = L.marker([hotel.lat, hotel.lng], { icon: hotelIcon })
       .addTo(markersLayer)
       .bindPopup(`
-        <div style="min-width:240px">
+        <div style="min-width:250px">
           <div style="font-weight:800; margin-bottom:4px;">${escapeHtml(hotel.name)}</div>
           <div style="color:#94a3b8; font-size:12px; margin-bottom:10px;">Focal point</div>
           <a href="${hotel.link}" target="_blank" rel="noopener">Open in Google Maps</a>
@@ -387,236 +355,118 @@
 
     bounds.extend([hotel.lat, hotel.lng]);
 
-    // =========================
-    // GEOCODING (Nominatim)
-    // =========================
-    // We geocode by NAME (and bias to NYC) and cache results in localStorage to avoid re-hitting the service.
-    // If you want to hardcode lat/lng later, you can add lat/lng to the place objects and geocoding will skip them.
-    const CACHE_KEY = "nyc_bar_map_geocode_v1";
+    // Sort places by distance from hotel
+    const enriched = places.map((p, idx) => ({
+      ...p,
+      id: `p${idx}`,
+      miles: haversineMiles(hotel, p)
+    })).sort((a,b) => a.miles - b.miles);
 
-    function loadCache(){
-      try { return JSON.parse(localStorage.getItem(CACHE_KEY) || "{}"); }
-      catch { return {}; }
-    }
-    function saveCache(cache){
-      localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
-    }
-    function clearCache(){
-      localStorage.removeItem(CACHE_KEY);
-    }
+    // Markers + lines
+    const markerById = new Map();
 
-    function setProgress(done, total, label){
-      const pct = total ? Math.round((done/total)*100) : 0;
-      barFill.style.width = `${pct}%`;
-      progressText.textContent = label || `${done}/${total}`;
-    }
+    enriched.forEach((p) => {
+      const icon = makeDotIcon(p.cat.marker);
+      const marker = L.marker([p.lat, p.lng], { icon }).addTo(markersLayer);
 
-    async function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
-
-    async function geocodeOne(query){
-      // Nominatim search endpoint (JSONv2)
-      const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q=${encodeURIComponent(query)}`;
-      const res = await fetch(url, { headers: { "Accept":"application/json" } });
-      if(!res.ok) throw new Error(`Geocode HTTP ${res.status}`);
-      const data = await res.json();
-      if(!data || !data[0]) return null;
-      return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon), display: data[0].display_name || "" };
-    }
-
-    async function geocodeAll({ force=false } = {}){
-      markersLayer.clearLayers();
-      linesLayer.clearLayers();
-      bounds.clear();
-      bounds.extend([hotel.lat, hotel.lng]);
-      hotelMarker.addTo(markersLayer);
-
-      const cache = loadCache();
-      const total = places.length;
-      let done = 0;
-
-      setProgress(0, total, "Geocoding…");
-
-      for (const p of places){
-        done++;
-        setProgress(done-1, total, `Geocoding… ${done-1}/${total}`);
-
-        const cacheKey = p.link || p.name;
-        let coord = (!force && cache[cacheKey]) ? cache[cacheKey] : null;
-
-        // If you ever add p.lat/p.lng manually, we will use it and also cache it.
-        if (typeof p.lat === "number" && typeof p.lng === "number"){
-          coord = { lat:p.lat, lng:p.lng, display:"(manual)" };
-          cache[cacheKey] = coord;
-        }
-
-        if(!coord){
-          // Bias query to NYC and include category hint (helps Nominatim)
-          const q = `${p.name}, New York, NY`;
-          try{
-            coord = await geocodeOne(q);
-            if(coord){
-              cache[cacheKey] = coord;
-              saveCache(cache);
-            }
-          }catch(e){
-            coord = null;
-          }
-
-          // Be polite (and reduce rate-limit chances)
-          await sleep(1100);
-        }
-
-        if(coord){
-          p.lat = coord.lat;
-          p.lng = coord.lng;
-          p._display = coord.display || "";
-        } else {
-          p.lat = null; p.lng = null;
-          p._display = "";
-        }
-      }
-
-      setProgress(total, total, "Rendering pins…");
-
-      // Build enriched list for cards
-      const enriched = places.map(p => {
-        const hasCoord = typeof p.lat === "number" && typeof p.lng === "number";
-        const miles = hasCoord ? haversineMiles(hotel, p) : null;
-        return { ...p, hasCoord, miles };
-      }).sort((a,b) => {
-        // sort "has coord" first, then by miles
-        if (a.hasCoord && !b.hasCoord) return -1;
-        if (!a.hasCoord && b.hasCoord) return 1;
-        if (!a.hasCoord && !b.hasCoord) return a.name.localeCompare(b.name);
-        return a.miles - b.miles;
-      });
-
-      // Add markers/lines for those with coords
-      for (const p of enriched){
-        if(!p.hasCoord) continue;
-
-        const icon = makeDotIcon(p.cat.color);
-        const marker = L.marker([p.lat, p.lng], { icon }).addTo(markersLayer);
-
-        marker.bindPopup(`
-          <div style="min-width:250px">
-            <div style="font-weight:800; margin-bottom:4px;">${escapeHtml(p.name)}</div>
-            <div style="color:#94a3b8; font-size:12px; margin-bottom:8px;">
-              ${escapeHtml(p.cat.label)} • ~${p.miles.toFixed(2)} mi from hotel
-            </div>
-            <div style="display:flex; gap:10px; flex-wrap:wrap;">
-              <a href="${p.link}" target="_blank" rel="noopener">Open your link</a>
-              <a href="https://www.google.com/maps/dir/?api=1&origin=${hotel.lat},${hotel.lng}&destination=${p.lat},${p.lng}&travelmode=walking"
-                 target="_blank" rel="noopener">Walking directions</a>
-            </div>
+      marker.bindPopup(`
+        <div style="min-width:260px">
+          <div style="font-weight:800; margin-bottom:4px;">${escapeHtml(p.name)}</div>
+          <div style="color:#94a3b8; font-size:12px; margin-bottom:8px;">
+            ${escapeHtml(p.cat.label)} • ~${p.miles.toFixed(2)} mi from hotel
           </div>
-        `);
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <a href="${p.link}" target="_blank" rel="noopener">Open your link</a>
+            <a href="https://www.google.com/maps/dir/?api=1&origin=${hotel.lat},${hotel.lng}&destination=${p.lat},${p.lng}&travelmode=walking"
+               target="_blank" rel="noopener">Walking directions</a>
+          </div>
+        </div>
+      `);
 
-        // line to hotel
-        L.polyline([[hotel.lat, hotel.lng],[p.lat,p.lng]], { weight:2, opacity:.22 }).addTo(linesLayer);
+      // line to hotel
+      L.polyline([[hotel.lat, hotel.lng],[p.lat, p.lng]], { weight:2, opacity:.22 }).addTo(linesLayer);
 
-        bounds.extend([p.lat, p.lng]);
-      }
+      bounds.extend([p.lat, p.lng]);
+      markerById.set(p.id, marker);
+    });
 
-      map.fitBounds(bounds.pad(0.12));
-
-      // Render cards
-      renderCards(enriched);
-
-      countPill.innerHTML = `<b>${enriched.length + 1}</b> locations`;
-      setProgress(total, total, "Done");
-    }
+    map.fitBounds(bounds.pad(0.12));
 
     // =========================
     // CARDS
     // =========================
-    function renderCards(items){
-      cardsEl.innerHTML = "";
+    const cardsEl = document.getElementById("cards");
+    const countPill = document.getElementById("countPill");
+    countPill.innerHTML = `<b>${enriched.length + 1}</b> locations`;
 
-      // Hotel card
-      const hotelCard = document.createElement("div");
-      hotelCard.className = "card";
-      hotelCard.innerHTML = `
-        <h3>${escapeHtml(hotel.name)} <span class="badge">Focal point</span></h3>
-        <p class="meta">Center marker. All distances are measured from here.</p>
+    // Hotel card
+    const hotelCard = document.createElement("div");
+    hotelCard.className = "card hotel";
+    hotelCard.innerHTML = `
+      <h3>${escapeHtml(hotel.name)} <span class="badge hotel">Hotel (Focal)</span></h3>
+      <p class="meta">All distances are measured from here.</p>
+      <div class="actions">
+        <a class="btn" href="${hotel.link}" target="_blank" rel="noopener">Open hotel link</a>
+        <a class="btn" href="#" data-pan-hotel="1">Show on map</a>
+      </div>
+    `;
+    cardsEl.appendChild(hotelCard);
+
+    // Place cards
+    enriched.forEach((p) => {
+      const card = document.createElement("div");
+      card.className = `card ${p.cat.cardClass}`;
+      card.innerHTML = `
+        <h3>
+          ${escapeHtml(p.name)}
+          <span class="badge ${p.cat.badgeClass}">${escapeHtml(p.cat.label)}</span>
+          <span class="badge">~${p.miles.toFixed(2)} mi</span>
+        </h3>
+        <p class="meta">${escapeHtml(p.desc || "")}</p>
         <div class="actions">
-          <a class="btn" href="${hotel.link}" target="_blank" rel="noopener">Open hotel link</a>
-          <a class="btn" href="https://www.openstreetmap.org/?mlat=${hotel.lat}&mlon=${hotel.lng}#map=18/${hotel.lat}/${hotel.lng}" target="_blank" rel="noopener">View on OSM</a>
+          <a class="btn" href="${p.link}" target="_blank" rel="noopener">Open your link</a>
+          <a class="btn" href="https://www.google.com/maps/dir/?api=1&origin=${hotel.lat},${hotel.lng}&destination=${p.lat},${p.lng}&travelmode=walking"
+             target="_blank" rel="noopener">Walking directions</a>
+          <a class="btn" href="#" data-pan="${p.id}">Show on map</a>
         </div>
       `;
-      cardsEl.appendChild(hotelCard);
-
-      for (const p of items){
-        const card = document.createElement("div");
-        card.className = `card ${p.cat.cssCard}`;
-        const milesBadge = p.hasCoord ? `~${p.miles.toFixed(2)} mi` : `No pin yet`;
-        card.innerHTML = `
-          <h3>
-            ${escapeHtml(p.name)}
-            <span class="badge ${p.cat.badge}">${escapeHtml(p.cat.label)}</span>
-            <span class="badge">${escapeHtml(milesBadge)}</span>
-          </h3>
-          <p class="meta">${escapeHtml(p.desc || "")}${p.hasCoord && p._display ? `<br><span style="opacity:.75;">${escapeHtml(p._display)}</span>` : ""}</p>
-          <div class="actions">
-            <a class="btn" href="${p.link}" target="_blank" rel="noopener">Open your link</a>
-            ${p.hasCoord ? `
-              <a class="btn" href="https://www.google.com/maps/dir/?api=1&origin=${hotel.lat},${hotel.lng}&destination=${p.lat},${p.lng}&travelmode=walking"
-                 target="_blank" rel="noopener">Walking directions</a>
-              <a class="btn" href="#" data-pan="${p.lat},${p.lng}">Show on map</a>
-            ` : `
-              <a class="btn" href="#" data-retry="${escapeHtml(p.link || p.name)}">Try pin again</a>
-            `}
-          </div>
-        `;
-        cardsEl.appendChild(card);
-      }
-    }
-
-    // Card click handlers
-    cardsEl.addEventListener("click", async (e) => {
-      const pan = e.target.closest("a[data-pan]");
-      if (pan){
-        e.preventDefault();
-        const [lat,lng] = pan.getAttribute("data-pan").split(",").map(Number);
-        map.setView([lat,lng], Math.max(map.getZoom(), 16), { animate:true });
-
-        // open popup if marker matches
-        markersLayer.eachLayer(layer => {
-          if(layer && layer.getLatLng && layer.openPopup){
-            const ll = layer.getLatLng();
-            if(Math.abs(ll.lat-lat) < 1e-6 && Math.abs(ll.lng-lng) < 1e-6) layer.openPopup();
-          }
-        });
-      }
-
-      const retry = e.target.closest("a[data-retry]");
-      if (retry){
-        e.preventDefault();
-        // Clear cache and re-run once (quick fix)
-        clearCache();
-        await geocodeAll({ force:true });
-      }
+      cardsEl.appendChild(card);
     });
 
-    // Open all links
+    // Buttons
+    document.getElementById("fitAll").addEventListener("click", (e) => {
+      e.preventDefault();
+      map.fitBounds(bounds.pad(0.12));
+    });
+
     document.getElementById("openAll").addEventListener("click", (e) => {
       e.preventDefault();
       window.open(hotel.link, "_blank", "noopener");
-      places.forEach(p => window.open(p.link, "_blank", "noopener"));
+      enriched.forEach(p => window.open(p.link, "_blank", "noopener"));
     });
 
-    // Re-geocode
-    document.getElementById("reGeocode").addEventListener("click", async (e) => {
+    // Card → map interaction
+    cardsEl.addEventListener("click", (e) => {
+      const hotelBtn = e.target.closest("[data-pan-hotel]");
+      if (hotelBtn){
+        e.preventDefault();
+        map.setView([hotel.lat, hotel.lng], Math.max(map.getZoom(), 16), { animate:true });
+        hotelMarker.openPopup();
+        return;
+      }
+
+      const panBtn = e.target.closest("[data-pan]");
+      if (!panBtn) return;
+
       e.preventDefault();
-      clearCache();
-      await geocodeAll({ force:true });
-    });
+      const id = panBtn.getAttribute("data-pan");
+      const p = enriched.find(x => x.id === id);
+      const m = markerById.get(id);
+      if (!p || !m) return;
 
-    // Kick off
-    (async function init(){
-      countPill.innerHTML = `<b>${places.length + 1}</b> locations`;
-      await geocodeAll({ force:false });
-    })();
+      map.setView([p.lat, p.lng], Math.max(map.getZoom(), 16), { animate:true });
+      m.openPopup();
+    });
   </script>
 </body>
 </html>
